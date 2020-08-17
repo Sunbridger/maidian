@@ -51,7 +51,8 @@ export default class Test extends Service {
             include: {
                 model: this.ctx.model.Bury,
                 as: 'buryObj',
-            }
+            },
+            attributes: ['platform_code']
         });
         return result;
     }
