@@ -29,11 +29,16 @@ export default class HomeController extends Controller {
             type_id, business_desc, user_email, user_phone,user_name, disable, param_key, param_value
         })));
 
-        // 插入到埋点和目录关系表中
-        await ctx.service.pc.addToMiddleTable(Util.getMiddleParams({
-            platform_code, type_id
-        }));
+        const hasSame = await ctx.service.pc.checkCateHasSameTypeId({
+            type_id, platform_code
+        });
 
+        if (!hasSame) {
+            // 插入到埋点和目录关系表中
+            await ctx.service.pc.addToMiddleTable(Util.getMiddleParams({
+                platform_code, type_id
+            }));
+        }
         ctx.body = '注册成功';
 
     }
