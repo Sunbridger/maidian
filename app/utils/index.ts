@@ -27,8 +27,6 @@ export default {
             });
             typeId = typeId.replace(/\&$/, '');
         }
-
-
         return {
             typeId,
             disable,

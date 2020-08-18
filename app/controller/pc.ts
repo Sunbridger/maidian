@@ -47,15 +47,23 @@ export default class HomeController extends Controller {
     public async gettrace() {
         const { ctx } = this;
         const { pageIndex, pageSize, platform_code, user_id } = ctx.query;
-        // TODO 用户id待确定
-        console.log(user_id);
-        const where = Util.cleanWhereObj({ platform_code });
+        // TODO 用户id 暂时用用户邮箱标志
+        const whereMiddle = Util.cleanWhereObj({
+            platform_code
+        });
+        const whereBury = Util.cleanWhereObj({
+            user_email: user_id
+        });
         const result = await ctx.service.pc.getBuryInfoFromThisCate({
             pageIndex: Number(pageIndex) || 1,
             pageSize: Number(pageSize) || 20,
-            where
+            whereMiddle,
+            whereBury
         });
-        const total_count = await ctx.service.pc.getCountByCate(where);
+        const total_count = await ctx.service.pc.getCountByCate({
+            whereMiddle,
+            whereBury
+        });
         ctx.body = {
             result,
             total_count
@@ -77,7 +85,7 @@ export default class HomeController extends Controller {
             await ctx.service.pc.addToSendTable({
                 type_id, param_key, param_value, env, platform, init_version
             });
-            ctx.body = `${type_id} 注册成功`;
+            ctx.body = `${type_id} 上报成功`;
         }
     }
 

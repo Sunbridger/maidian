@@ -51,17 +51,18 @@ export default class Test extends Service {
     }
 
     public async getBuryInfoFromThisCate(params) {
-        const { pageIndex, pageSize, where } = params;
+        const { pageIndex, pageSize, whereMiddle, whereBury } = params;
 
         const offset = (pageIndex - 1) * pageSize;
 
         const result = await this.ctx.model.Buryluban.findAll({
             limit: pageSize,
             offset,
-            where,
+            where: whereMiddle,
             include: {
                 model: this.ctx.model.Bury,
                 as: 'buryObj',
+                where: whereBury
             },
             attributes: ['platform_code']
         });
@@ -77,9 +78,15 @@ export default class Test extends Service {
     }
 
     // 查询Bury表中的总数根据where
-    public async getCountByCate(where) {
+    public async getCountByCate(whereObj) {
+        const { whereMiddle, whereBury } = whereObj;
         const result = await this.ctx.model.Buryluban.findAndCountAll({
-            where
+            where: whereMiddle,
+            include: {
+                model: this.ctx.model.Bury,
+                as: 'buryObj',
+                where: whereBury
+            }
         });
         return result.count || 0;
     }
