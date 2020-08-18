@@ -11,9 +11,12 @@ module.exports = app => {
         disable: INTEGER,
         param_key: STRING,
         param_value: STRING,
-        deleate_at: DATE,
+        deleted_at: DATE,
         created_at: DATE,
         updated_at: DATE
+    }, {
+        deletedAt: 'deleted_at',
+        paranoid: true
     });
 
     Bury.associate = function() {

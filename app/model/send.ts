@@ -8,8 +8,13 @@ module.exports = app => {
         param_key: STRING,
         param_value: STRING,
         env: STRING,
-        version: STRING,
+        init_version: STRING,
+        current_version: STRING,
         created_at: DATE,
-        updated_at: DATE
-      });
+        updated_at: DATE,
+        deleted_at: DATE
+    }, {
+        deletedAt: 'deleted_at',
+        paranoid: true
+    });
   };

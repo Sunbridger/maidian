@@ -4,8 +4,8 @@ import Util from '../utils';
 export default class HomeController extends Controller {
 
     // 只支持一个目录下创建多个type_id
-    // type_id business_desc platform_code多个用,分隔
-    // category_id 多个的话请发多次请求。。。
+    // type_id business_desc 多个用,分隔
+    // category_id （也就是platform_code）多个的话请发多次请求。。。
     public async addtrace() {
         const { ctx } = this;
         const {
@@ -39,6 +39,7 @@ export default class HomeController extends Controller {
                 platform_code, type_id
             }));
         }
+
         ctx.body = '注册成功';
 
     }
@@ -63,7 +64,7 @@ export default class HomeController extends Controller {
 
     public async sendupdate() {
         const { ctx } = this;
-        const { type_id, param_key, param_value, env, platform, version } = ctx.request.body;
+        const { type_id, param_key, param_value, env, platform, version: init_version } = ctx.request.body;
         const hasId = await ctx.service.pc.checkSameTypeId(type_id);
         // 已经在本服务中注册过的直接更新参数
         if (hasId) {
@@ -74,7 +75,7 @@ export default class HomeController extends Controller {
         } else {
             // 手动将其插入到sendinfo表中
             await ctx.service.pc.addToSendTable({
-                type_id, param_key, param_value, env, platform, version
+                type_id, param_key, param_value, env, platform, init_version
             });
             ctx.body = `${type_id} 注册成功`;
         }
