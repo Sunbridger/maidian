@@ -1,34 +1,27 @@
 import { EggAppConfig, EggAppInfo, PowerPartial } from 'egg';
+import DataBaseConfig from '../app/database/database.config';
 
 export default (appInfo: EggAppInfo) => {
-  const config = {} as PowerPartial<EggAppConfig>;
+    const config = {} as PowerPartial<EggAppConfig>;
 
-  // override config from framework / plugin
-  // use for cookie sign key, should change to your own and keep security
-  config.keys = appInfo.name + '_1597038250886_3781';
+    config.keys = appInfo.name + '_1597038250886_3781';
 
-  // add your egg config in here
-  config.middleware = ['formatData'];
+    config.sequelize = {
+        dialect: 'mysql',
+        host: DataBaseConfig.prod.host,
+        port: DataBaseConfig.prod.port,
+        username: DataBaseConfig.prod.username,
+        password: DataBaseConfig.prod.password,
+        define: {
+            timestamps: true,
+            freezeTableName: true,
+            underscored: false,
+            createdAt: 'created_at',
+            updatedAt: 'updated_at'
+        },
+        timezone: '+08:00',
+        database: 'maidian'
+    };
 
-  config.sequelize = {
-    dialect: 'mysql',
-    host: '172.17.40.99',
-    port: 3333,
-    username: 'root',
-    password: '123456',
-    define: {
-        timestamps: true,
-        freezeTableName: true,
-        underscored: false,
-        createdAt: 'created_at',
-        updatedAt: 'updated_at',
-    },
-    timezone: '+08:00',
-    database: 'maidian'
-  };
-
-  // the return config will combines to EggAppConfig
-  return {
-    ...config
-  };
+    return config;
 };
