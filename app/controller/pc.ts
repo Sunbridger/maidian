@@ -40,7 +40,9 @@ export default class HomeController extends Controller {
             }));
         }
 
-        ctx.body = '注册成功';
+        ctx.body = {
+            result: '注册成功'
+        };
 
     }
 
@@ -79,13 +81,17 @@ export default class HomeController extends Controller {
             await ctx.service.pc.updateParams({
                 type_id, param_key, param_value
             });
-            ctx.body = `${type_id} 注册过了，已更新参数`;
+            ctx.body = {
+                result: `${type_id} 在规范平台注册过，已更新参数为 ${param_key}`
+            };
         } else {
             // 手动将其插入到sendinfo表中
             await ctx.service.pc.addToSendTable({
                 type_id, param_key, param_value, env, platform, init_version
             });
-            ctx.body = `${type_id} 上报成功`;
+            ctx.body = {
+                result: `${type_id} 上报成功`
+            }
         }
     }
 
@@ -93,7 +99,5 @@ export default class HomeController extends Controller {
         const { ctx } = this;
         ctx.body = await ctx.service.pc.queryAllInfoFromPrefixTab();
     }
-
-
 
 }

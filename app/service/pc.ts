@@ -13,17 +13,21 @@ export default class Test extends Service {
     }
 
     public async addToSendTable(params) {
-        const { type_id, env } = params;
+        const { type_id, env, platform, init_version, param_key, param_value } = params;
         const isExitObj = await this.ctx.model.Send.findOrCreate({
             where: {
                 type_id,
-                env
+                env,
+                platform
             },
             defaults: params
         });
         if (!isExitObj[1]) {
-            console.log('send表存在这个了 已经更新了');
-            isExitObj[0].update(params);
+            isExitObj[0].update({
+                param_key,
+                param_value,
+                current_version: init_version
+            });
         }
     }
 
