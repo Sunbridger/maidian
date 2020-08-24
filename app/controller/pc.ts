@@ -14,7 +14,7 @@ export default class HomeController extends Controller {
         } = ctx.request.body;
 
         const paramsOkObj = Util.checkAddtraceParams({
-            type_id, business_desc, user_email, user_phone,user_name, platform_code, category_id
+            type_id, business_desc, user_phone,user_name, platform_code, category_id
         });
 
         if (paramsOkObj) {
@@ -58,12 +58,12 @@ export default class HomeController extends Controller {
     public async gettrace() {
         const { ctx } = this;
         const { pageIndex, pageSize, platform_code, user_id } = ctx.query;
-        // TODO 用户id 暂时用用户邮箱标志
+        // TODO 用户id 暂时用用户手机标志
         const whereMiddle = Util.cleanWhereObj({
             platform_code
         });
         const whereBury = Util.cleanWhereObj({
-            user_email: user_id
+            user_phone: user_id
         });
         const result = await ctx.service.pc.getBuryInfoFromThisCate({
             pageIndex: Number(pageIndex) || 1,
