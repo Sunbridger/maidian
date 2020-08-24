@@ -1,5 +1,16 @@
 export default {
 
+    checkAddtraceParams(obj) {
+        const reaultArr:any = [];
+
+        Object.keys(obj).forEach((key) => {
+            if ([null, undefined, ''].includes(obj[key])) {
+                reaultArr.push(key);
+            }
+        });
+        return reaultArr.toString();
+    },
+
     cleanWhereObj(obj = {}) {
         const newObj = { ...obj };
         Object.keys(newObj).forEach((key) => {

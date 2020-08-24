@@ -13,6 +13,15 @@ export default class HomeController extends Controller {
             platform_code, category_id
         } = ctx.request.body;
 
+        const paramsOkObj = Util.checkAddtraceParams({
+            type_id, business_desc, user_email, user_phone,user_name, platform_code, category_id
+        });
+
+        if (paramsOkObj) {
+            ctx.body = `${paramsOkObj} 为必填参数！`;
+            return;
+        }
+
         // 插入到鲁班服务（该接口自动检测平台目录下typeId是否存在相同
         const lubanIsOK = await ctx.service.luban.addTraceToLUBAN(Util.getLubanParams({
             type_id, business_desc, category_id, disable, user_name
