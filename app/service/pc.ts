@@ -121,4 +121,9 @@ export default class Test extends Service {
             raw: true
         });
     }
+
+    public async getAllInfoFromSend() {
+        const result = await this.ctx.model.Send.findAll();
+        return result;
+    }
 }
