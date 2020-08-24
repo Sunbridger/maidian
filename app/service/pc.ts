@@ -29,6 +29,17 @@ export default class Test extends Service {
                 current_version: init_version
             });
         }
+        // 报警到钉钉
+        await this.ctx.curl('https://oapi.dingtalk.com/robot/send?access_token=b02d06b20782441338c85d43ca0c6fd6f0a404958906adfd570b66f3e475d37f', {
+            contentType: 'json',
+            method: 'POST',
+            data: {
+                msgtype: "text",
+                text: {
+                    "content": `检测到未注册埋点上报：\n平台：${platform}\n埋点：${type_id}\n上报环境：${env}\n请及时处理`
+                },
+            }
+        });
     }
 
     public async hasOneAndDelet(type_id) {
