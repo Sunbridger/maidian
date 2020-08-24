@@ -9,12 +9,12 @@ export default class HomeController extends Controller {
     public async addtrace() {
         const { ctx } = this;
         const {
-            type_id, business_desc, user_email, user_phone,user_name, disable, param_key, param_value,
+            type_id, type_name, business_desc, user_email, user_phone,user_name, disable, param_key, param_value,
             platform_code, category_id
         } = ctx.request.body;
 
         const paramsOkObj = Util.checkAddtraceParams({
-            type_id, business_desc, user_phone,user_name, platform_code, category_id
+            type_id, type_name, business_desc, user_phone,user_name, platform_code, category_id
         });
 
         if (paramsOkObj) {
@@ -35,7 +35,7 @@ export default class HomeController extends Controller {
 
         // 插入到自己服务的埋点表中
         await ctx.service.pc.addToBuryTable((Util.getBuryParams({
-            type_id, business_desc, user_email, user_phone,user_name, disable, param_key, param_value
+            type_id, type_name, business_desc, user_email, user_phone,user_name, disable, param_key, param_value
         })));
 
         const hasSame = await ctx.service.pc.checkCateHasSameTypeId({

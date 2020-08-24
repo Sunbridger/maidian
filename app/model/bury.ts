@@ -4,6 +4,7 @@ module.exports = app => {
     const Bury = app.model.define('buryinfo', {
         type_id: { type: STRING, primaryKey: true },
         business_desc: STRING,
+        type_name: STRING,
         user_email: STRING,
         user_phone: STRING,
         user_name: STRING,
