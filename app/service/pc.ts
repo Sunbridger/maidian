@@ -31,6 +31,18 @@ export default class Test extends Service {
         }
     }
 
+    public async hasOneAndDelet(type_id) {
+        const arr = await this.ctx.model.Send.findAll({
+            where: {
+                type_id
+            }
+        });
+        arr.forEach((row) => {
+            row.destroy();
+        });
+
+    }
+
     public async checkCateHasSameTypeId(params) {
         const { type_id, platform_code } = params;
         const arr = await this.ctx.model.Buryluban.findAll({

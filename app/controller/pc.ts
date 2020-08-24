@@ -49,6 +49,9 @@ export default class HomeController extends Controller {
             }));
         }
 
+        // 删除上报表中已注册的埋点
+        await ctx.service.pc.hasOneAndDelet(type_id);
+
         ctx.body = {
             result: '注册成功'
         };
