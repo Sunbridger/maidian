@@ -47,12 +47,13 @@ export default {
     },
 
     getBuryParams(obj) {
-        let { type_id, business_desc, type_name } = obj;
+        let { type_id, business_desc, type_name, param_key } = obj;
         const resultArr:any = [];
 
         type_id = type_id.split(',');
         business_desc = business_desc.split(',');
         type_name = type_name.split(',');
+        param_key = param_key.split('&');
 
         if (
             type_id.length === business_desc.length
@@ -64,7 +65,8 @@ export default {
                     ...obj,
                     type_id: type_id[index],
                     type_name: type_name[index],
-                    business_desc: item
+                    business_desc: item,
+                    param_key: param_key[index]
                 });
             });
         }
@@ -89,7 +91,6 @@ export default {
         });
 
         return resultArr;
-    },
-
+    }
 
 }
