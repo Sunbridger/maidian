@@ -91,6 +91,7 @@ export default {
         });
 
         return resultArr;
-    }
+    },
+
 
 }

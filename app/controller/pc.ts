@@ -112,4 +112,29 @@ export default class HomeController extends Controller {
         ctx.body = await ctx.service.pc.queryAllInfoFromPrefixTab();
     }
 
+    public async delettrace() {
+        const { ctx } = this;
+        const { type_id, platform_code } = ctx.request.body;
+        await ctx.service.pc.delettrace({ type_id, platform_code });
+
+        ctx.body = {
+            result: `${type_id} 删除成功`
+        };
+    }
+
+    public async updatetrace() {
+        const { ctx } = this;
+        const { type_id, platform_code, type_name, disable } = ctx.request.body;
+        const result = await ctx.service.pc.updatetrace({ type_id, platform_code, type_name, disable });
+
+        if (result) {
+            ctx.body = {
+                result: `${type_id} 更新成功`
+            };
+        } else {
+            ctx.body = `${type_id} 不存在`;
+        }
+
+    }
+
 }

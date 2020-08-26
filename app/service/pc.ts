@@ -138,4 +138,42 @@ export default class Test extends Service {
         const result = await this.ctx.model.Send.findAll();
         return result;
     }
+
+    public async delettrace(params) {
+        const { type_id, platform_code } = params;
+        await this.ctx.model.Buryluban.destroy({
+            where: {
+                type_id, platform_code
+            }
+        });
+
+        const hasOne = await this.ctx.model.Buryluban.findOne({
+            where: {
+                type_id, platform_code
+            }
+        });
+
+        if (!hasOne) {
+            await this.ctx.model.Bury.destroy({
+                where: {
+                    type_id
+                }
+            });
+        }
+    }
+
+    public async updatetrace(params) {
+        const { type_id, type_name, disable } = params;
+        const result = await this.ctx.model.Bury.update({
+            type_name, disable
+        }, {
+            where: {
+                type_id
+            },
+        });
+        return result[0];
+    }
+
+
+
 }

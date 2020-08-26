@@ -15,4 +15,10 @@ export default (app: Application) => {
     // 获取鲁班配置信息前缀表
     router.get('/getprefix', controller.pc.getprefix);
 
+    // 删除埋点
+    router.post('/delettrace', controller.pc.delettrace);
+
+    // 更新埋点
+    router.post('/updatetrace', controller.pc.updatetrace);
+
 };
