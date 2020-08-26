@@ -91,7 +91,8 @@ export default class Test extends Service {
                 as: 'buryObj',
                 where: whereBury
             },
-            attributes: ['platform_code']
+            attributes: ['platform_code'],
+            order: [['created_at', 'DESC']]
         });
         return result;
     }
