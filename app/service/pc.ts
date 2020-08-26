@@ -163,10 +163,8 @@ export default class Test extends Service {
     }
 
     public async updatetrace(params) {
-        const { type_id, type_name, disable } = params;
-        const result = await this.ctx.model.Bury.update({
-            type_name, disable
-        }, {
+        const { type_id } = params;
+        const result = await this.ctx.model.Bury.update(params, {
             where: {
                 type_id
             },

@@ -124,8 +124,12 @@ export default class HomeController extends Controller {
 
     public async updatetrace() {
         const { ctx } = this;
-        const { type_id, platform_code, type_name, disable } = ctx.request.body;
-        const result = await ctx.service.pc.updatetrace({ type_id, platform_code, type_name, disable });
+        const { type_id, platform_code, type_name, disable, param_key, param_value, business_desc, user_email, user_phone,user_name } = ctx.request.body;
+        const shouUpdateParams = Util.cleanWhereObj({
+            type_id, platform_code, type_name, disable, param_key, param_value,
+            business_desc, user_email, user_phone,user_name
+        });
+        const result = await ctx.service.pc.updatetrace(shouUpdateParams);
 
         if (result) {
             ctx.body = {
