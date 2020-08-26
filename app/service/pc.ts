@@ -141,19 +141,20 @@ export default class Test extends Service {
 
     public async delettrace(params) {
         const { type_id, platform_code } = params;
+
         await this.ctx.model.Buryluban.destroy({
             where: {
                 type_id, platform_code
             }
         });
 
-        const hasOne = await this.ctx.model.Buryluban.findOne({
+        const hasOneNow = await this.ctx.model.Buryluban.findOne({
             where: {
-                type_id, platform_code
+                type_id
             }
         });
 
-        if (!hasOne) {
+        if (!hasOneNow) {
             await this.ctx.model.Bury.destroy({
                 where: {
                     type_id

@@ -118,7 +118,7 @@ export default class HomeController extends Controller {
         await ctx.service.pc.delettrace({ type_id, platform_code });
 
         ctx.body = {
-            result: `${type_id} 删除成功`
+            result: `${platform_code}下的${type_id} 删除成功`
         };
     }
 
