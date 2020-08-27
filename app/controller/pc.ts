@@ -24,7 +24,7 @@ export default class HomeController extends Controller {
 
         // 插入到鲁班服务（该接口自动检测平台目录下typeId是否存在相同
         const lubanIsOK = await ctx.service.luban.addTraceToLUBAN(Util.getLubanParams({
-            type_id, business_desc, category_id, disable, user_name
+            type_id, type_name, category_id, disable, user_name
         }));
 
 

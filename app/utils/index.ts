@@ -26,14 +26,14 @@ export default {
     },
 
     getLubanParams(obj) {
-        let { type_id, business_desc, category_id, disable, user_name } = obj;
+        let { type_id, type_name, category_id, disable, user_name } = obj;
         let typeId = '';
 
         type_id = type_id.split(',');
-        business_desc = business_desc.split(',');
+        type_name = type_name.split(',');
 
-        if (type_id.length === business_desc.length) {
-            business_desc.forEach((item, index) => {
+        if (type_id.length === type_name.length) {
+            type_name.forEach((item, index) => {
                 typeId += `${item},${type_id[index]}&`;
             });
             typeId = typeId.replace(/\&$/, '');
