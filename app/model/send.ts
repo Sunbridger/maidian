@@ -12,7 +12,9 @@ module.exports = app => {
         current_version: STRING,
         created_at: DATE,
         updated_at: DATE,
-        deleted_at: DATE
+        deleted_at: DATE,
+        pv: INTEGER,
+        uv: INTEGER
     }, {
         deletedAt: 'deleted_at',
         paranoid: true

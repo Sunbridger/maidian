@@ -14,7 +14,9 @@ module.exports = app => {
         param_value: STRING,
         deleted_at: DATE,
         created_at: DATE,
-        updated_at: DATE
+        updated_at: DATE,
+        pv: INTEGER,
+        uv: INTEGER
     }, {
         deletedAt: 'deleted_at',
         paranoid: true

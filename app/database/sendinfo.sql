@@ -10,6 +10,8 @@ CREATE TABLE sendinfo(
     `created_at` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     `deleted_at` datetime COMMENT '软删除的时间',
+    `pv` INT(255) COMMENT 'pv数量',
+    `uv` INT(255) COMMENT 'uv数量',
     PRIMARY KEY (id),
     INDEX env (env)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8

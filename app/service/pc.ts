@@ -3,9 +3,21 @@ import { Service } from 'egg';
 export default class Test extends Service {
 
     public async addToBuryTable(paramsArr) {
-        return await this.ctx.model.Bury.bulkCreate(paramsArr, {
-            ignoreDuplicates: true
+        paramsArr.forEach(async element => {
+            const objEle = await this.ctx.model.Bury.findOrCreate({
+                where: {
+                    type_id: element.type_id
+                },
+                paranoid: false,
+                defaults: element
+            });
+            if (objEle[0]?.dataValues?.deleted_at) {
+                objEle[0].restore();
+            }
         });
+        // return await this.ctx.model.Bury.bulkCreate(paramsArr, {
+        //     ignoreDuplicates: true
+        // });
     }
 
     public async addToMiddleTable(paramsArr) {
