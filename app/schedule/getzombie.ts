@@ -5,5 +5,6 @@ module.exports = {
     },
     async task() {
         // todo 获取非活跃数据报警到钉钉
+        console.log('todo 获取非活跃数据报警到钉钉');
     }
 };

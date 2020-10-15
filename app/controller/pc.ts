@@ -86,7 +86,7 @@ export default class HomeController extends Controller {
 
     public async sendupdate() {
         const { ctx } = this;
-        const { type_id, param_key, param_value, env, platform, version: init_version } = ctx.request.body;
+        const { type_id, param_key, param_value, env, platform, version: init_version, user_phone, user_name, device } = ctx.request.body;
         const hasId = await ctx.service.pc.checkSameTypeId(type_id);
         // 已经在本服务中注册过的直接更新参数(更新主表及联表的版本号)
         if (hasId) {
@@ -103,7 +103,7 @@ export default class HomeController extends Controller {
         } else {
             // 手动将其插入到sendinfo表中
             await ctx.service.pc.addToSendTable({
-                type_id, param_key, param_value, env, platform, init_version
+                type_id, param_key, param_value, env, platform, init_version, user_phone, user_name, device
             });
             ctx.body = {
                 result: `${type_id} 上报成功`
