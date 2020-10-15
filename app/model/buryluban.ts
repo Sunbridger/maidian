@@ -6,7 +6,9 @@ module.exports = app => {
         type_id: STRING,
         platform_code: STRING,
         created_at: DATE,
-        updated_at: DATE
+        updated_at: DATE,
+        init_version: STRING,
+        current_version: STRING
     });
     Buryluban.associate = function() {
         app.model.Buryluban.belongsTo(app.model.Bury, {

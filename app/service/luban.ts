@@ -1,4 +1,5 @@
 import { Service } from 'egg';
+import { Op } from 'sequelize';
 
 const BASEURL = 'http://luban-api.souche-inc.com/api';
 
@@ -37,10 +38,36 @@ export default class Test extends Service {
             data,
             dataType: 'json'
         });
-        return result?.data?.data?.map((row) => ({
-            type_id: row.typeid,
-            pv: row.pv,
-            uv: row.uv
-        }));
+        const returnObj:any = [];
+        result?.data?.data?.forEach((item) => {
+            returnObj.push({
+                type_id: item.typeid,
+                pv: item.pv,
+                uv: item.uv,
+                yeast: 0
+            });
+        })
+        const arrObj = await ctx.model[data.type].findAll({
+            where: {
+                type_id: {
+                    [Op.in]: data.typeid?.split(',')
+                }
+            },
+            raw: true,
+            attributes: ['type_id', 'yeast']
+        });
+
+        const nouvArr = arrObj.map((row) => {
+            if (result?.data?.data?.every((item) => item.typeid !== row.type_id)) {
+                return {
+                    type_id: row.type_id,
+                    yeast: Number(row.yeast) + 1,
+                    pv: 0,
+                    uv: 0
+                }
+            }
+        }).filter((e) => e && e.type_id);
+
+        return [...returnObj, ...nouvArr];
     }
 }

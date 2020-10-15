@@ -12,6 +12,7 @@ CREATE TABLE sendinfo(
     `deleted_at` datetime COMMENT '软删除的时间',
     `pv` INT(255) COMMENT 'pv数量',
     `uv` INT(255) COMMENT 'uv数量',
+    `yeast` INT(255) COMMENT '失活天数',
     PRIMARY KEY (id),
     INDEX env (env)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8

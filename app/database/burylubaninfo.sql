@@ -4,5 +4,7 @@ CREATE TABLE burylubaninfo(
     `platform_code` VARCHAR(50) NOT NULL COMMENT '平台code',
     `created_at` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    `init_version` VARCHAR(20) COMMENT '客户端版本号',
+    `current_version` VARCHAR(20) COMMENT '客户端版本号',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8

@@ -1,4 +1,5 @@
 import { Service } from 'egg';
+import { Op } from 'sequelize';
 
 export default class Test extends Service {
 
@@ -25,14 +26,17 @@ export default class Test extends Service {
     }
 
     public async addToSendTable(params) {
-        const { type_id, env, platform, init_version, param_key, param_value } = params;
+        const { type_id, env, platform, init_version, param_key, param_value, user_phone, user_name, device } = params;
+        if (!type_id) return;
         const isExitObj = await this.ctx.model.Send.findOrCreate({
             where: {
                 type_id,
                 env,
                 platform
             },
-            defaults: params
+            defaults: {
+                type_id, env, platform, init_version, param_key, param_value
+            }
         });
         if (!isExitObj[1]) {
             isExitObj[0].update({
@@ -41,17 +45,28 @@ export default class Test extends Service {
                 current_version: init_version
             });
         }
-        // 报警到钉钉
-        await this.ctx.curl('https://oapi.dingtalk.com/robot/send?access_token=b02d06b20782441338c85d43ca0c6fd6f0a404958906adfd570b66f3e475d37f', {
-            contentType: 'json',
-            method: 'POST',
-            data: {
-                msgtype: "text",
-                text: {
-                    "content": `检测到未注册埋点上报：\n平台：${platform}\n埋点：${type_id}\n上报环境：${env}\n请及时处理`
-                },
-            }
+
+        const type_idExit = await this.ctx.model.Ignore.findOne({
+            where: {
+                type_id
+            },
+            raw: true
         });
+
+        if (!type_idExit) {
+            // 报警到钉钉
+            await this.ctx.curl('https://oapi.dingtalk.com/robot/send?access_token=b02d06b20782441338c85d43ca0c6fd6f0a404958906adfd570b66f3e475d37f', {
+                contentType: 'json',
+                method: 'POST',
+                data: {
+                    "msgtype": "markdown",
+                    "markdown": {
+                        "title":"未注册埋点上报通知",
+                        "text": `### 未注册埋点上报通知 \n\n #### 平台：${platform} \n\n #### 埋点：${type_id} \n\n #### 上报环境：${env} \n\n #### 设备信息：${device || '暂无'} \n\n #### 版本号：${init_version} \n\n #### 用户名：${user_name || user_phone || '暂无'} \n\n **请[查看鲁班](http://f2e.prepub.souche-inc.com/projects/tgc-trace/luban-web2/#/track/wowcar&PLATFORM_WOWCAR_APP_IOS&2/management)及时处理**`
+                    }
+                }
+            });
+        }
     }
 
     public async hasOneAndDelet(type_id) {
@@ -103,7 +118,7 @@ export default class Test extends Service {
                 as: 'buryObj',
                 where: whereBury
             },
-            attributes: ['platform_code'],
+            attributes: ['platform_code', 'init_version', 'current_version'],
             order: [['created_at', 'DESC']]
         });
         return result;
@@ -183,6 +198,50 @@ export default class Test extends Service {
             },
         });
         return result[0];
+    }
+
+    public async updateVersion(params) {
+        const { type_id, platform: platform_code, init_version } = params;
+        const isExitObj = await this.ctx.model.Buryluban.findOne({
+            where: {
+                type_id,
+                platform_code
+            }
+        });
+        if (!isExitObj) return;
+        const updateObj:{
+            init_version?: string,
+            current_version?: string
+        } = {};
+
+        if (isExitObj?.dataValues?.init_version) {
+            updateObj.current_version = init_version;
+        } else {
+            updateObj.init_version = init_version;
+        }
+
+        await isExitObj.update(updateObj);
+
+    }
+
+    public async getdesc(idsArr) {
+        const result = await this.ctx.model.Bury.findAll({
+            where: {
+                type_id: {
+                    [Op.in]: idsArr
+                }
+            },
+            attributes: ['type_id', 'business_desc'],
+            raw: true
+        });
+        return result;
+    }
+
+    public async addignore(params) {
+        return await this.ctx.model.Ignore.findOrCreate({
+            where: params,
+            defaults: params
+        });
     }
 
 

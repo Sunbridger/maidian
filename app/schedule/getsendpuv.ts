@@ -5,8 +5,7 @@ const len = 10;
 module.exports = {
     schedule: {
         cron: '0 0 2 * * *', // 每日2点执行
-        type: 'worker', // 指定所有的 worker 都需要执行
-        immediate: true
+        type: 'worker' // 指定所有的 worker 都需要执行
     },
     async task(ctx) {
         const sendIds = await ctx.model.Send.findAll({
@@ -17,7 +16,8 @@ module.exports = {
             const ids = arr.map((row) => row.type_id).toString();
             const result = await ctx.service.luban.getTracePVUV({
                 typeid: ids,
-                datestr: Util.getYesterDateStr()
+                datestr: Util.getYesterDateStr(),
+                type: 'Send'
             });
             sendIds.forEach((ele) => {
                 result.forEach((t) => {
@@ -26,9 +26,10 @@ module.exports = {
                     }
                 });
             });
+
             await ctx.model.Send.bulkCreate(result, {
                 ignoreDuplicates: true,
-                updateOnDuplicate: ['pv', 'uv']
+                updateOnDuplicate: ['pv', 'uv', 'yeast']
             });
         });
     }

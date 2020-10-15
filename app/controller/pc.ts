@@ -88,11 +88,15 @@ export default class HomeController extends Controller {
         const { ctx } = this;
         const { type_id, param_key, param_value, env, platform, version: init_version } = ctx.request.body;
         const hasId = await ctx.service.pc.checkSameTypeId(type_id);
-        // 已经在本服务中注册过的直接更新参数
+        // 已经在本服务中注册过的直接更新参数(更新主表及联表的版本号)
         if (hasId) {
             await ctx.service.pc.updateParams({
                 type_id, param_key, param_value
             });
+            await ctx.service.pc.updateVersion({
+                type_id, platform, init_version
+            });
+
             ctx.body = {
                 result: `${type_id} 在规范平台注册过，已更新参数为 ${param_key}`
             };
@@ -139,6 +143,50 @@ export default class HomeController extends Controller {
             ctx.body = `${type_id} 不存在`;
         }
 
+    }
+
+    public async trigger() {
+        const { token, type } = this.ctx.request.body;
+        const prefixUrl = require('path').resolve(__dirname, '../schedule');
+        if (token === 'trace') {
+            if (require('fs').readdirSync(prefixUrl).includes(type + '.ts')) {
+                await this.app.runSchedule(`../schedule/${type}`);
+                this.ctx.body = {
+                    result: '定时任务执行成功'
+                };
+
+            } else {
+                this.ctx.body = 'type类型错误，请联系 刘林儒(liulinru@souche.com)';
+            }
+        } else {
+            this.ctx.body = 'token错误，请联系 刘林儒(liulinru@souche.com)';
+        }
+
+    }
+
+    public async getdesc() {
+        const { type_ids } = this.ctx.request.body;
+        if (type_ids) {
+            const ids_arr = type_ids.split(',');
+            const result = await this.ctx.service.pc.getdesc(ids_arr);
+            this.ctx.body = result;
+        } else {
+            this.ctx.body = 'type_ids 参数必填';
+        }
+
+    }
+
+    public async addignore() {
+        const { type_id, remark } = this.ctx.request.body;
+        if (type_id) {
+            const result = await this.ctx.service.pc.addignore(Util.cleanWhereObj({
+                type_id,
+                remark
+            }));
+            this.ctx.body = result;
+        } else {
+            this.ctx.body = 'type_ids 参数必填';
+        }
     }
 
 }

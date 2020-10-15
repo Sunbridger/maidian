@@ -21,4 +21,13 @@ export default (app: Application) => {
     // 更新埋点
     router.post('/updatetrace', controller.pc.updatetrace);
 
+    // 手动触发定时任务
+    router.post('/trigger', controller.pc.trigger);
+
+    // 根据type_id 查询对应的买点描述
+    router.post('/getdesc', controller.pc.getdesc);
+
+    // 增加上报白名单接口
+    router.post('/addignore', controller.pc.addignore);
+
 };

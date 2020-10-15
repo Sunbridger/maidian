@@ -16,7 +16,8 @@ module.exports = app => {
         created_at: DATE,
         updated_at: DATE,
         pv: INTEGER,
-        uv: INTEGER
+        uv: INTEGER,
+        yeast: INTEGER
     }, {
         deletedAt: 'deleted_at',
         paranoid: true
