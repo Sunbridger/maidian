@@ -109,6 +109,12 @@ export default {
         day1.setTime(day1.getTime() - 24 * 60 * 60 * 1000);
         let datestr = day1.getFullYear() + '-' + (day1.getMonth() + 1) + '-' + day1.getDate();
         return datestr;
+    },
+
+    getToday() {
+        let day1 = new Date();
+        let datestr = day1.getFullYear() + '-' + (day1.getMonth() + 1) + '-' + day1.getDate();
+        return datestr;
     }
 
 

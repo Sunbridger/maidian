@@ -1,5 +1,8 @@
 import { Service } from 'egg';
 import { Op } from 'sequelize';
+import Utils from '../utils';
+
+const DINGTALK_WEBHOOK = 'https://oapi.dingtalk.com/robot/send?access_token=b02d06b20782441338c85d43ca0c6fd6f0a404958906adfd570b66f3e475d37f';
 
 export default class Test extends Service {
 
@@ -55,7 +58,7 @@ export default class Test extends Service {
 
         if (!type_idExit) {
             // 报警到钉钉
-            await this.ctx.curl('https://oapi.dingtalk.com/robot/send?access_token=b02d06b20782441338c85d43ca0c6fd6f0a404958906adfd570b66f3e475d37f', {
+            await this.ctx.curl(DINGTALK_WEBHOOK, {
                 contentType: 'json',
                 method: 'POST',
                 data: {
@@ -243,6 +246,129 @@ export default class Test extends Service {
             defaults: params
         });
     }
+
+    public async handZombie() {
+        const res1 = await this.ctx.model.Bury.findAll({
+            where: {
+                yeast: {
+                    [Op.gt]: 30
+                }
+            },
+            raw: true
+        }).map((row) => ({
+            user_name: row.user_name || row.user_phone,
+            type_id: row.type_id,
+            yeast: row.yeast
+        })).filter((e) => e.user_phone || e.user_name);
+
+        const res2 = await this.ctx.model.Send.findAll({
+            where: {
+                yeast: {
+                    [Op.gt]: 30
+                }
+            },
+            raw: true
+        }).map((row) => ({
+            user_name: row.platform,
+            type_id: row.type_id,
+            yeast: row.yeast
+        })).filter((e) => e.type_id && e.user_name);
+
+
+        let resObj = {};
+
+        res1.forEach((item) => {
+            const key = item.user_name;
+            if (resObj[key]) {
+                resObj[key].push(item.type_id);
+            } else {
+                resObj[key] = [item.type_id];
+            }
+        });
+
+        res2.forEach((item) => {
+            const key = item.user_name;
+            if (resObj[key]) {
+                resObj[key].push(item.type_id);
+            } else {
+                resObj[key] = [item.type_id];
+            }
+        });
+
+        let str = `### 截至${Utils.getToday()}非活跃埋点数据如下 \n\n`;
+
+        Object.keys(resObj).forEach((name) => {
+            const ids = resObj[name];
+            let ids_str = `**归属人：${name}** \n\n`;
+            ids.forEach((type_id, index) => {
+                ids_str += `${index + 1}： ${type_id} \n\n`;
+            });
+            str += ids_str;
+        });
+
+        str += '**请[查看详情](http://f2e.prepub.souche-inc.com/projects/tgc-trace/luban-web2/#/track/wowcar&PLATFORM_WOWCAR_APP_IOS&2/management)及时处理**';
+
+        await this.ctx.curl(DINGTALK_WEBHOOK, {
+            contentType: 'json',
+            method: 'POST',
+            data: {
+                "msgtype": "markdown",
+                "markdown": {
+                    "title":"非活跃埋点数据通知",
+                    "text": str
+                }
+            }
+        });
+    }
+
+    public async handGetBuryPuv() {
+        const { ctx } = this;
+        const buryIds = await ctx.model.Bury.findAll({
+            raw: true,
+            attributes: ['type_id']
+        });
+        Utils.splitGroup(buryIds, 10).forEach(async (arr) => {
+            const ids = arr.map((row) => row.type_id).toString();
+            const result = await ctx.service.luban.getTracePVUV({
+                typeid: ids,
+                datestr: Utils.getYesterDateStr(),
+                type: 'Bury'
+            });
+            await ctx.model.Bury.bulkCreate(result, {
+                ignoreDuplicates: true,
+                updateOnDuplicate: ['pv', 'uv', 'yeast']
+            });
+        });
+    }
+
+    public async handGetSendPuv() {
+        const { ctx } = this;
+        const sendIds = await ctx.model.Send.findAll({
+            raw: true,
+            attributes: ['type_id', 'id']
+        });
+        Utils.splitGroup(sendIds, 10).forEach(async (arr) => {
+            const ids = arr.map((row) => row.type_id).toString();
+            const result = await ctx.service.luban.getTracePVUV({
+                typeid: ids,
+                datestr: Utils.getYesterDateStr(),
+                type: 'Send'
+            });
+            sendIds.forEach((ele) => {
+                result.forEach((t) => {
+                    if (ele.type_id === t.type_id) {
+                        t.id = ele.id;
+                    }
+                });
+            });
+
+            await ctx.model.Send.bulkCreate(result, {
+                ignoreDuplicates: true,
+                updateOnDuplicate: ['pv', 'uv', 'yeast']
+            });
+        });
+    }
+
 
 
 
