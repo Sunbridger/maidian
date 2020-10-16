@@ -295,6 +295,10 @@ export default class Test extends Service {
             }
         });
 
+        const needWarning = Object.keys(resObj).length;
+
+        if (!needWarning) return;
+
         let str = `### 截至${Utils.getToday()}非活跃埋点数据如下 \n\n`;
 
         Object.keys(resObj).forEach((name) => {
