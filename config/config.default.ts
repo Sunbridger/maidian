@@ -8,7 +8,7 @@ export default (appInfo: EggAppInfo) => {
     config.middleware = ['formatData'];
 
     config.cors = {
-        origin: '*',
+        // origin: '*',
         allowMethods: 'GET,POST,PUT,DELETE,HEAD,PATCH,OPTIONS',
         credentials: true,
     };
